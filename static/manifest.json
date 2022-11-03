@@ -4,8 +4,8 @@
     "start_url": "/",
     "icons": [
         {
-            "src": "time.webp",
-            "type": "image/webp",
+            "src": "favicon.png",
+            "type": "image/png",
             "sizes": "512x512"
         }
     ],
