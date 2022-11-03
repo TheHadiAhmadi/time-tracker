@@ -5,7 +5,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"deploy": "npm run build && npx surge build mini-time-tracker.surge.sh"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
@@ -13,5 +14,9 @@
 		"svelte": "^3.44.0",
 		"vite": "^3.1.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@sveltejs/adapter-static": "^1.0.0-next.47",
+		"@ubeac/svelte": "^0.0.3-next.88"
+	}
 }
