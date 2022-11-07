@@ -43,7 +43,7 @@
     localStorage.setItem("time-tracker-started", JSON.stringify(started));
     localStorage.setItem("time-tracker-start-date", JSON.stringify(startDate));
 
-    console.log(startDate);
+    spentTime = diffDate(startDate);
   }
 
   function stop() {
@@ -77,7 +77,7 @@
     if (request.description === "") return;
     if (request.project === "") return;
 
-    times = [...times, request];
+    times = [...times, JSON.parse(JSON.stringify(request))];
     request.time = 0;
     request.project = "";
     request.date = new Date().valueOf();
