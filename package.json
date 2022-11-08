@@ -17,6 +17,8 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-static": "^1.0.0-next.47",
-		"@ubeac/svelte": "^0.0.3-next.88"
+		"@ubeac/svelte": "^0.0.3-next.88",
+		"vite-plugin-windicss": "^1.8.8",
+		"windicss": "^3.5.6"
 	}
 }
