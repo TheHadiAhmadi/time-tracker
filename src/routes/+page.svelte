@@ -427,7 +427,7 @@
     @apply max-h-100 overflow-auto;
   }
   :global(.u-dialog) {
-    @apply block duration-300 transition-all backdrop-filter pointer-events-none transform-gpu translate-y-full backdrop-blur-0 opacity-0;
+    @apply h-full block duration-300 transition-all backdrop-filter pointer-events-none transform-gpu translate-y-full backdrop-blur-0 opacity-0;
   }
 
   :global(.u-dialog-open) {
