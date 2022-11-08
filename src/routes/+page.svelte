@@ -33,31 +33,35 @@
   let interval = null;
 
   function diffDate(prev) {
-    if (!prev) return 0;
-    if (prev === 0) return 0;
+    if (!prev) return { minutes: 0, seconds: 0 };
+    if (prev === 0) return { minutes: 0, seconds: 0 };
     const diff = new Date().valueOf() - prev;
-    const minutes = Math.floor(diff / (1000 * 60));
-    console.log({ minutes }, { diff, prev });
+    const allSeconds = diff / 1000;
 
-    return minutes;
+    const minutes = Math.floor(allSeconds / 60);
+
+    return {
+      minutes,
+      seconds: Math.floor(allSeconds % 60),
+    };
   }
 
   function start() {
     started = true;
-    startDate = new Date().valueOf() - request.time * 60 * 1000;
+    startDate = new Date().valueOf() - spentTime.minutes * 60 * 1000;
     localStorage.setItem("time-tracker-started", JSON.stringify(started));
     localStorage.setItem("time-tracker-start-date", JSON.stringify(startDate));
     interval = setInterval(() => {
+      console.log("inside interval");
       spentTime = diffDate(startDate);
-    }, 5000); // 5 seconds
-
-    spentTime = diffDate(startDate);
+    }, 1000); // 1 seconds
   }
 
   function stop() {
     clearInterval(interval);
     started = false;
-    request.time = diffDate(startDate);
+    spentTime.seconds = 0;
+    request.time = diffDate(startDate).minutes;
     localStorage.setItem("time-tracker-started", "false");
     localStorage.setItem("time-tracker-start-date", "");
   }
@@ -84,19 +88,29 @@
   let newProjectName;
   let newProjectOpen = false;
   function add() {
+    console.log("add", request);
     stop();
 
-    if (request.time === 0) return;
+    if (spentTime.minutes === 0) return;
     if (request.description === "") return;
     if (request.project === "") return;
 
+    request.time = spentTime.minutes;
+
     times = [...times, JSON.parse(JSON.stringify(request))];
+    spentTime = {
+      minutes: 0,
+      seconds: 0,
+    };
+
     request.time = 0;
     request.project = "";
     request.date = new Date().valueOf();
     request.description = "";
     request.removed = false;
     localStorage.setItem("time-tracker-times", JSON.stringify(times));
+
+    logTimeOpen = false;
   }
 
   function removeTime(time) {
@@ -110,7 +124,10 @@
 
   let times = [];
 
-  let spentTime = 0;
+  let spentTime = {
+    minutes: 0,
+    seconds: 0,
+  };
 
   let logTimeOpen = false;
 
@@ -124,9 +141,13 @@
 
     const startDateJSON = localStorage.getItem("time-tracker-start-date") ?? "";
     startDate = startDateJSON ? JSON.parse(startDateJSON) : 0;
-  });
 
-  $: spentTime = request.time;
+    if (started)
+      interval = setInterval(() => {
+        console.log("inside interval");
+        spentTime = diffDate(startDate);
+      }, 1000);
+  });
 </script>
 
 <div class="flex flex-col h-full">
@@ -145,7 +166,7 @@
     >
       <button
         disabled={started}
-        on:click={() => (request.time = request.time + 1)}
+        on:click={() => (spentTime.minutes = spentTime.minutes + 1)}
         class="bttn"
         class:!opacity-10={started}
       >
@@ -158,11 +179,12 @@
         ></button
       >
       <span class="my-8 mb-6">
-        {spentTime}
+        {spentTime.minutes}
+        <span class="text-lg -ml-2 font-light">{spentTime.seconds}</span>
       </span>
       <button
         disabled={started}
-        on:click={() => (request.time = request.time - 1)}
+        on:click={() => (spentTime.minutes = spentTime.minutes - 1)}
         class="bttn"
         class:!opacity-10={started}
       >
@@ -191,7 +213,10 @@
       <button on:click={() => (logTimeOpen = true)} class="bttn bttn-blue">
         Save
       </button>
-      <button on:click={() => (viewTimesOpen = true)} class="bttn !w-1/4">
+      <button
+        on:click={() => (viewTimesOpen = true)}
+        class="bttn !w-full !sm:w-1/4"
+      >
         View All
       </button>
     </div>
